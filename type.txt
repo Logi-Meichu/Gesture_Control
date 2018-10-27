@@ -1,5 +1,3 @@
 five
 thumbs_up
-victory
-ok_hand
-noise
+nothing
