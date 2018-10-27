@@ -3,14 +3,20 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
+import win32com.client as comclt
+from win32gui import GetWindowText, GetForegroundWindow
 
+
+shell = comclt.Dispatch("WScript.Shell")
 
 cap = cv.VideoCapture(0)
-bg = cv.createBackgroundSubtractorMOG2(10, 20)
+bg = cv.createBackgroundSubtractorMOG2(100, 20)
 detect = False
 right_sided = True
 count = 264
 cnt = 0
+pre = 1
+delay = -1
 
 feature = []
 target = []
@@ -18,12 +24,12 @@ target = []
 for i in range(count):
     feature.append(cv.imread('hand_five' + str(i) + '.jpg',cv.IMREAD_GRAYSCALE))
     target.append(0)
-for i in range(count):
-    feature.append(cv.imread('hand_thumbs_up' + str(i) + '.jpg',cv.IMREAD_GRAYSCALE))
-    target.append(1)
+# for i in range(count):
+#     feature.append(cv.imread('hand_thumbs_up' + str(i) + '.jpg',cv.IMREAD_GRAYSCALE))
+#     target.append(1)
 for i in range(count):
     feature.append(cv.imread('hand_nothing' + str(i) + '.jpg',cv.IMREAD_GRAYSCALE))
-    target.append(2)
+    target.append(1)
 h,w = feature[0].shape
 
 feature = np.asarray(feature)
@@ -35,7 +41,7 @@ model = keras.Sequential([
     keras.layers.Flatten(input_shape=(h,w)),
     keras.layers.Dense(16, activation=tf.nn.relu),
     keras.layers.Dense(16, activation=tf.nn.relu),
-    keras.layers.Dense(3, activation=tf.nn.softmax)
+    keras.layers.Dense(2, activation=tf.nn.softmax)
 ])
 
 model.compile(optimizer=tf.train.AdamOptimizer(), 
@@ -47,9 +53,7 @@ model.fit(feature, target, epochs=2)
 while(True):
     _, frame = cap.read()
     height, width, _ = frame.shape
-    lr = -1
-    if detect:
-        lr = 0
+    lr = -0.001
     fgmask = bg.apply(frame, learningRate=lr)
     kernel = np.ones((4, 4), np.uint8)
     ret, fgmask = cv.threshold(fgmask, 0, 255, cv.THRESH_BINARY)
@@ -70,16 +74,39 @@ while(True):
     cv.drawContours(black, contours, -1, (255, 255, 255), 3)
     cv.imshow('frame', black)
     
+    black = np.uint8(black)
+    black=cv.cvtColor(black,code=cv.COLOR_RGB2GRAY)
+    predictions = model.predict(np.asarray([black]))
+    cur = np.argmax(predictions[0])
+    if delay == -1:
+        if pre == 0:
+            if cur == 0:
+                count = count + 1
+                if count > 20:
+                    if GetWindowText(GetForegroundWindow()) == "Killing Floor 2 (64-bit, DX11) v1070":
+                        shell.SendKeys("u")
+                    count = 0
+                    delay = 0
+            else:
+                if count > 20:
+                    if GetWindowText(GetForegroundWindow()) == "Killing Floor 2 (64-bit, DX11) v1070":
+                        shell.SendKeys("u")
+                        count = 0
+                        delay = 0
+                else:
+                    if GetWindowText(GetForegroundWindow()) == "Killing Floor 2 (64-bit, DX11) v1070":
+                        shell.SendKeys("i")
+                        count = 0
+                        delay = 0
+        else:
+            if cur == 0:
+                count = count + 1
+    else:
+        delay = delay + 1
+        if delay == 45:
+            delay = -1
+    pre = cur
     k = cv.waitKey(1)
-    if k == ord('w'):
-        detect = not detect
-    if k == ord('f'):
-        #cv.imwrite('hand_nothing'+str(cnt)+'.jpg',black)
-        cnt = cnt+1
-        black = np.uint8(black)
-        black=cv.cvtColor(black,code=cv.COLOR_RGB2GRAY)
-        predictions = model.predict(np.asarray([black]))
-        print(np.argmax(predictions[0]))
     if k == 27:
         break
 
