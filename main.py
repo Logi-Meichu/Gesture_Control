@@ -15,16 +15,20 @@ while(True):
     fgmask = bg.apply(frame, learningRate = lr)
     kernel = np.ones((4,4),np.uint8)
     ret,fgmask = cv.threshold(fgmask,0,255,cv.THRESH_BINARY)
+    fgmask = cv.erode(fgmask,kernel,iterations=1)
+    fgmask = cv.dilate(fgmask,kernel,iterations=1)
+    fgmask = cv.erode(fgmask,kernel,iterations=1)
+    fgmask = cv.dilate(fgmask,kernel,iterations=3)
     if right_sided:
-        cropped_fgmask = fgmask[0:height//5*3,0:width//2]
-        cropped_frame = frame[0:height//5*3,0:width//2]        
+        cropped_fgmask = fgmask[0:height//5*3,0:width//5*2]
+        cropped_frame = frame[0:height//5*3,0:width//5*2]        
     else:
-        cropped_fgmask = fgmask[0:height//5*3,width//2:width]
-        cropped_frame = frame[0:height//5*3,width//2:width]        
+        cropped_fgmask = fgmask[0:height//5*3,width//3:width]
+        cropped_frame = frame[0:height//5*3,width//3:width]        
     _,contours, hierarchy = cv.findContours(cropped_fgmask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     cv.drawContours(cropped_frame, contours, -1, (0,255,0), 3)
-    #cv.imshow('frame',cropped_frame)
-    cv.imshow('frame',fgmask)
+    cv.imshow('frame',cropped_frame)
+    # cv.imshow('frame',fgmask)
 
 
     k = cv.waitKey(1)
