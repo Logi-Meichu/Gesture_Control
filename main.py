@@ -98,7 +98,7 @@ while(True):
                         pyautogui.keyDown('ctrlleft')
                     count = 0
                     delay = 0
-                else:
+                elif count > 5:
                     if GetWindowText(GetForegroundWindow()) == "Killing Floor 2 (64-bit, DX11) v1070":
                         shell.SendKeys("i")
                     if GetWindowText(GetForegroundWindow()) == "BattleBlock Theater":
@@ -110,9 +110,11 @@ while(True):
                 count = count + 1
     else:
         delay = delay + 1
+        if delay == 20:
+            pyautogui.keyUP('e')
         if delay == 45:
             pyautogui.keyUp('ctrlleft')
-            pyautogui.keyUp('e')
+            #pyautogui.keyUp('e')
             delay = -1
     pre = cur
     k = cv.waitKey(1)
