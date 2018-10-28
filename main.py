@@ -98,7 +98,7 @@ while(True):
                         pyautogui.keyDown('ctrlleft')
                     count = 0
                     delay = 0
-                elif count > 5:
+                elif count > 7:
                     if GetWindowText(GetForegroundWindow()) == "Killing Floor 2 (64-bit, DX11) v1070":
                         shell.SendKeys("i")
                     if GetWindowText(GetForegroundWindow()) == "BattleBlock Theater":
