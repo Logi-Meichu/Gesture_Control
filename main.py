@@ -111,7 +111,7 @@ while(True):
     else:
         delay = delay + 1
         if delay == 20:
-            pyautogui.keyUP('e')
+            pyautogui.keyUp('e')
         if delay == 45:
             pyautogui.keyUp('ctrlleft')
             #pyautogui.keyUp('e')
