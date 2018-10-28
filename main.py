@@ -83,7 +83,7 @@ while(True):
         if pre == 0:
             if cur == 0:
                 count = count + 1
-                if count > 20:
+                if count > 30:
                     if GetWindowText(GetForegroundWindow()) == "Killing Floor 2 (64-bit, DX11) v1070":
                         shell.SendKeys("u")
                     if GetWindowText(GetForegroundWindow()) == "BattleBlock Theater":
@@ -91,7 +91,7 @@ while(True):
                     count = 0
                     delay = 0
             else:
-                if count > 20:
+                if count > 30:
                     if GetWindowText(GetForegroundWindow()) == "Killing Floor 2 (64-bit, DX11) v1070":
                         shell.SendKeys("u")
                     if GetWindowText(GetForegroundWindow()) == "BattleBlock Theater":
