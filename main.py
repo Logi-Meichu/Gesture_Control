@@ -5,6 +5,7 @@ from tensorflow import keras
 import matplotlib.pyplot as plt
 import win32com.client as comclt
 from win32gui import GetWindowText, GetForegroundWindow
+import pyautogui
 
 
 shell = comclt.Dispatch("WScript.Shell")
@@ -85,25 +86,33 @@ while(True):
                 if count > 20:
                     if GetWindowText(GetForegroundWindow()) == "Killing Floor 2 (64-bit, DX11) v1070":
                         shell.SendKeys("u")
+                    if GetWindowText(GetForegroundWindow()) == "BattleBlock Theater":
+                        pyautogui.keyDown('ctrlleft')
                     count = 0
                     delay = 0
             else:
                 if count > 20:
                     if GetWindowText(GetForegroundWindow()) == "Killing Floor 2 (64-bit, DX11) v1070":
                         shell.SendKeys("u")
-                        count = 0
-                        delay = 0
+                    if GetWindowText(GetForegroundWindow()) == "BattleBlock Theater":
+                        pyautogui.keyDown('ctrlleft')
+                    count = 0
+                    delay = 0
                 else:
                     if GetWindowText(GetForegroundWindow()) == "Killing Floor 2 (64-bit, DX11) v1070":
                         shell.SendKeys("i")
-                        count = 0
-                        delay = 0
+                    if GetWindowText(GetForegroundWindow()) == "BattleBlock Theater":
+                        pyautogui.keyDown('e')
+                    count = 0
+                    delay = 0
         else:
             if cur == 0:
                 count = count + 1
     else:
         delay = delay + 1
         if delay == 45:
+            pyautogui.keyUp('ctrlleft')
+            pyautogui.keyUp('e')
             delay = -1
     pre = cur
     k = cv.waitKey(1)
